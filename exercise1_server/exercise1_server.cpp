@@ -1,14 +1,24 @@
 #include "pch.h"
 
 #include <iostream>
+#include <map>
+#include <sstream>
+#include <vector>
+#include <iterator>
+
 #include <winsock2.h>
 
 using namespace std;
 
+constexpr int MESSAGE_SIZE = 1024;
+
 int main()
 {
+	std::map<string, SOCKET> clientsList;
+
 	WSADATA WSAData;
-	SOCKET serverSocket, clientSocket;
+	SOCKET serverSocket;
+	SOCKET clientSocket ;
 	SOCKADDR_IN serverAddr, clientAddr;
 
 	WSAStartup(MAKEWORD(2, 0), &WSAData);
@@ -21,20 +31,70 @@ int main()
 
 	bind(serverSocket, (SOCKADDR *)&serverAddr, sizeof(serverAddr));
 
-	listen(serverSocket, 0);
+	listen(serverSocket, SOMAXCONN);
+	 
+	cout << "Listening..." << endl;
 
-	cout << "Listening for incoming connections..." << endl;
+	fd_set master;
+	FD_ZERO(&master);
 
-	char buffer[1024];
-	int clientAddrSize = sizeof(clientAddr);
-	if ((clientSocket = accept(serverSocket, (SOCKADDR *)&clientAddr, &clientAddrSize)) != INVALID_SOCKET) {
-		cout << "Client connected!" << endl;
-		recv(clientSocket, buffer, sizeof(buffer), 0);
-		cout << "Client says: " << buffer << endl;
-		memset(buffer, 0, sizeof(buffer));
+	FD_SET(serverSocket, &master);
 
-		closesocket(clientSocket);
-		cout << "Client disconnected." << endl;
+	while (true) {
+		
+		fd_set clone = master;
+		
+		int socketCount = select(0, &clone, nullptr, nullptr, nullptr);
+
+		for (int i = 0; i < socketCount; i++) {
+			SOCKET socket = clone.fd_array[i];
+
+			if (FD_ISSET(serverSocket, &clone)) {
+				SOCKET clientSocket = accept(serverSocket, nullptr, nullptr);
+				FD_SET(clientSocket, &master);
+				cout << "client = " << clientSocket << endl;
+				string welcomeMessage = "Bem Vindo ao Chat!";
+				int sendMsg = send(clientSocket, welcomeMessage.c_str(), welcomeMessage.size() + 1, 0);
+			
+				for (int i = 0; i < master.fd_count; i++) {
+					char message[MESSAGE_SIZE];
+
+					SOCKET destSocket = master.fd_array[i];
+					if (destSocket != clientSocket && destSocket != serverSocket) {
+						std::stringstream ss;
+						ss << "<Usuario @" << socket << " conectado> " << message;
+						string finalMessage = ss.str();
+						send(destSocket, finalMessage.c_str(), finalMessage.size() + 1, 0);
+					}
+				}
+			}
+			else {
+				char message[MESSAGE_SIZE];
+				//ZeroMemory(message, MESSAGE_SIZE);
+
+				int bytesIn = recv(socket, message, MESSAGE_SIZE + 1, 0);
+				if (bytesIn <= 0) {
+					closesocket(socket);
+					FD_CLR(socket, &master);
+					cout << "Um corno foi desconectado" << endl;
+				}
+				else {
+					for (int i = 0; i < master.fd_count; i++) {
+						SOCKET destSocket = master.fd_array[i];
+						if (destSocket != socket && destSocket != serverSocket) {
+							cout << "broadcast para socket = " << destSocket << endl;
+							std::stringstream ss;
+							ss << "@" << socket << " diz: " << message;
+							string finalMessage = ss.str();
+ 							cout << "finalMsg = " << finalMessage << endl;
+							send(destSocket, finalMessage.c_str(), finalMessage.size(), 0);
+						}
+					}
+				}
+			}
+
+		}
+
 	}
 }
 

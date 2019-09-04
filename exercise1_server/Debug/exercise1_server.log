@@ -1,2 +1,6 @@
 ﻿  exercise1_server.cpp
+c:\users\pedro\source\repos\distributedsystems\exercise1_server\exercise1_server.cpp(59): warning C4018: '<': signed/unsigned mismatch
+c:\users\pedro\source\repos\distributedsystems\exercise1_server\exercise1_server.cpp(82): warning C4018: '<': signed/unsigned mismatch
+c:\users\pedro\source\repos\distributedsystems\exercise1_server\exercise1_server.cpp(21): warning C4101: 'clientSocket': unreferenced local variable
+c:\users\pedro\source\repos\distributedsystems\exercise1_server\exercise1_server.cpp(22): warning C4101: 'clientAddr': unreferenced local variable
   exercise1_server.vcxproj -> C:\Users\Pedro\source\repos\DistributedSystems\Debug\exercise1_server.exe

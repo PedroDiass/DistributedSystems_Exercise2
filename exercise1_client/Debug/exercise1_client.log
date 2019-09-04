@@ -1,2 +1,3 @@
 ﻿  exercise1_client.cpp
+c:\users\pedro\source\repos\distributedsystems\exercise1_client\exercise1_client.cpp(22): warning C4101: 'clientSet': unreferenced local variable
   exercise1_client.vcxproj -> C:\Users\Pedro\source\repos\DistributedSystems\Debug\exercise1_client.exe
