@@ -1,3 +1,4 @@
 ﻿  exercise1_client.cpp
-c:\users\pedro\source\repos\distributedsystems\exercise1_client\exercise1_client.cpp(22): warning C4101: 'clientSet': unreferenced local variable
+c:\users\pedro\source\repos\distributedsystems\exercise1_client\exercise1_client.cpp(74): warning C4018: '<': signed/unsigned mismatch
+c:\users\pedro\source\repos\distributedsystems\exercise1_client\exercise1_client.cpp(35): warning C4101: 'clientSet': unreferenced local variable
   exercise1_client.vcxproj -> C:\Users\Pedro\source\repos\DistributedSystems\Debug\exercise1_client.exe

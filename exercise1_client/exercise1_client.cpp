@@ -3,8 +3,12 @@
 #include <iostream>
 #include <string>
 #include <thread>
+#include <vector>
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
+#include <sstream>
+#include <iterator>
+#include <algorithm>
 #include <winsock2.h>
 
 using std::string;
@@ -12,6 +16,15 @@ using std::cin;
 using std::cout;
 using std::endl;
 using std::ws;
+
+std::vector<string> split(string message)
+{
+	std::istringstream iss(message);
+	std::vector<std::string> results((std::istream_iterator<std::string>(iss)),
+		std::istream_iterator<std::string>());
+
+	return results;
+}
 
 int main()
 {
@@ -53,7 +66,21 @@ int main()
 
 		cout << string(response) << endl;
 		cout.clear();
+		break;
 	}
+
+	string message = string(response);
+
+	for (int i = 0; i < message.size(); i++) {
+		if (message.at(i) == ',') {
+			message[i] = ' ';
+		}
+	}
+
+	send(clientSocket, message.c_str(), message.size() + 1, 0);
+
+	string a;
+	cin >> a;
 
 	closesocket(clientSocket);
 	cout << "connection closed" << endl;
@@ -62,3 +89,4 @@ int main()
 
 	cout << "socket closed." << endl << endl;
 }
+
